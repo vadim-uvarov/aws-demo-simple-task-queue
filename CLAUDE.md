@@ -46,3 +46,12 @@ curl "$API_URL/tasks"
 - Timestamps are ISO-8601 UTC with milliseconds and a trailing `Z`, produced by `_now_iso()` in both handlers.
 - Task ids are UUIDv4 strings.
 - Status values are exactly `pending` | `in_progress` | `completed` — the frontend's CSS badge classes (`badge-pending`, `badge-in_progress`, `badge-completed`) match these literally.
+
+## Coding Standards
+
+### Commits
+- use commitizen format for commit messages
+
+### Function Naming
+- Start all function and method names with action verbs.
+- Prefer full variable names for readability (e.g., `response` instead of `resp`)
