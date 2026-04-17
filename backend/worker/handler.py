@@ -3,8 +3,11 @@ import os
 import time
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import Any
 
 import boto3
+from aws_lambda_typing.context import Context
+from aws_lambda_typing.events import SQSEvent
 
 TABLE_NAME = os.environ["TABLE_NAME"]
 
@@ -27,9 +30,7 @@ def _mark_in_progress(task_id: str) -> None:
 def _mark_completed(task_id: str, elapsed: float) -> None:
     _table.update_item(
         Key={"task_id": task_id},
-        UpdateExpression=(
-            "SET #s = :s, completed_at = :c, duration_seconds = :d, #r = :r"
-        ),
+        UpdateExpression=("SET #s = :s, completed_at = :c, duration_seconds = :d, #r = :r"),
         ExpressionAttributeNames={"#s": "status", "#r": "result"},
         ExpressionAttributeValues={
             ":s": "completed",
@@ -40,7 +41,7 @@ def _mark_completed(task_id: str, elapsed: float) -> None:
     )
 
 
-def _process(body: dict) -> None:
+def _process(body: dict[str, Any]) -> None:
     task_id = body["task_id"]
     seconds = int(body["seconds"])
     _mark_in_progress(task_id)
@@ -50,8 +51,8 @@ def _process(body: dict) -> None:
     _mark_completed(task_id, elapsed)
 
 
-def handler(event, _context):
+def handler(event: SQSEvent, _context: Context) -> dict[str, bool]:
     for record in event.get("Records", []):
-        body = json.loads(record["body"])
+        body: dict[str, Any] = json.loads(record["body"])
         _process(body)
     return {"ok": True}

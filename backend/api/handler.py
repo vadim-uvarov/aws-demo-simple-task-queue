@@ -3,23 +3,30 @@ import os
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
+from typing import Any
 
 import boto3
+from aws_lambda_typing.context import Context
+from aws_lambda_typing.events import APIGatewayProxyEventV2
+from aws_lambda_typing.responses import APIGatewayProxyResponseV2
+from mypy_boto3_dynamodb import DynamoDBServiceResource
+from mypy_boto3_dynamodb.service_resource import Table
+from mypy_boto3_sqs import SQSClient
 
 TABLE_NAME = os.environ["TABLE_NAME"]
 QUEUE_URL = os.environ["QUEUE_URL"]
 MAX_SECONDS = int(os.environ.get("MAX_SECONDS", "30"))
 
-_dynamodb = boto3.resource("dynamodb")
-_table = _dynamodb.Table(TABLE_NAME)
-_sqs = boto3.client("sqs")
+_dynamodb: DynamoDBServiceResource = boto3.resource("dynamodb")
+_table: Table = _dynamodb.Table(TABLE_NAME)
+_sqs: SQSClient = boto3.client("sqs")
 
 
 def _now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
-def _json_default(value):
+def _json_default(value: Any) -> int | float:
     if isinstance(value, Decimal):
         if value % 1 == 0:
             return int(value)
@@ -27,7 +34,7 @@ def _json_default(value):
     raise TypeError(f"Not JSON serializable: {type(value)}")
 
 
-def _response(status: int, body) -> dict:
+def _response(status: int, body: Any) -> APIGatewayProxyResponseV2:
     return {
         "statusCode": status,
         "headers": {"content-type": "application/json"},
@@ -35,7 +42,7 @@ def _response(status: int, body) -> dict:
     }
 
 
-def _create_task(event: dict) -> dict:
+def _create_task(event: APIGatewayProxyEventV2) -> APIGatewayProxyResponseV2:
     raw_body = event.get("body") or "{}"
     try:
         payload = json.loads(raw_body)
@@ -64,9 +71,9 @@ def _create_task(event: dict) -> dict:
     return _response(201, item)
 
 
-def _list_tasks() -> dict:
-    items: list[dict] = []
-    scan_kwargs: dict = {}
+def _list_tasks() -> APIGatewayProxyResponseV2:
+    items: list[dict[str, Any]] = []
+    scan_kwargs: dict[str, Any] = {}
     while True:
         resp = _table.scan(**scan_kwargs)
         items.extend(resp.get("Items", []))
@@ -78,7 +85,7 @@ def _list_tasks() -> dict:
     return _response(200, items)
 
 
-def handler(event, _context):
+def handler(event: APIGatewayProxyEventV2, _context: Context) -> APIGatewayProxyResponseV2:
     route = event.get("routeKey")
     if not route:
         method = event.get("requestContext", {}).get("http", {}).get("method")
