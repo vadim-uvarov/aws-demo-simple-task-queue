@@ -53,6 +53,10 @@ def _process(body: dict[str, Any]) -> None:
 
 def handler(event: SQSEvent, _context: Context) -> dict[str, bool]:
     for record in event.get("Records", []):
-        body: dict[str, Any] = json.loads(record["body"])
+        raw_body = record.get("body")
+        if raw_body is None:
+            print(f"Skipping SQS record without body: messageId={record.get('messageId')}")
+            continue
+        body: dict[str, Any] = json.loads(raw_body)
         _process(body)
     return {"ok": True}
