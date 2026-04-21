@@ -36,7 +36,7 @@ Smoke test the API directly:
 
 ```bash
 API_URL="$(terraform -chdir=terraform output -raw api_url)"
-curl -X POST "$API_URL/tasks" -H 'content-type: application/json' -d '{"seconds":3}'
+curl -X POST "$API_URL/tasks" -H 'content-type: application/json' -d '{"input_seconds":3}'
 curl "$API_URL/tasks"
 ```
 

@@ -49,24 +49,27 @@ def _create_task(event: APIGatewayProxyEventV2) -> APIGatewayProxyResponseV2:
     except json.JSONDecodeError:
         return _build_response(400, {"error": "body must be JSON"})
 
-    seconds = payload.get("seconds")
-    if not isinstance(seconds, int) or isinstance(seconds, bool):
-        return _build_response(400, {"error": "seconds must be an integer"})
-    if seconds < 0 or seconds > MAX_SECONDS:
-        return _build_response(400, {"error": f"seconds must be between 0 and {MAX_SECONDS}"})
+    input_seconds = payload.get("input_seconds")
+    if not isinstance(input_seconds, int) or isinstance(input_seconds, bool):
+        return _build_response(400, {"error": "input_seconds must be an integer"})
+    if input_seconds < 0 or input_seconds > MAX_SECONDS:
+        return _build_response(
+            400,
+            {"error": f"input_seconds must be between 0 and {MAX_SECONDS}"},
+        )
 
     task_id = str(uuid.uuid4())
     created_at = _get_now_iso()
     item: dict[str, str | int] = {
         "task_id": task_id,
-        "seconds": seconds,
+        "input_seconds": input_seconds,
         "status": "pending",
         "created_at": created_at,
     }
     _db_table.put_item(Item=item)
     _sqs.send_message(
         QueueUrl=QUEUE_URL,
-        MessageBody=json.dumps({"task_id": task_id, "seconds": seconds}),
+        MessageBody=json.dumps({"task_id": task_id, "input_seconds": input_seconds}),
     )
     return _build_response(201, item)
 

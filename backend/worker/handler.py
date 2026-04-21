@@ -43,10 +43,10 @@ def _mark_completed(task_id: str, elapsed: float) -> None:
 
 def _process(body: dict[str, Any]) -> None:
     task_id = body["task_id"]
-    seconds = int(body["seconds"])
+    input_seconds = int(body["input_seconds"])
     _mark_in_progress(task_id)
     t0 = time.monotonic()
-    time.sleep(seconds)
+    time.sleep(input_seconds)
     elapsed = time.monotonic() - t0
     _mark_completed(task_id, elapsed)
 

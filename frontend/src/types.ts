@@ -2,7 +2,7 @@ export type TaskStatus = "pending" | "in_progress" | "completed";
 
 export interface Task {
   task_id: string;
-  seconds: number;
+  input_seconds: number;
   status: TaskStatus;
   created_at: string;
   started_at?: string;

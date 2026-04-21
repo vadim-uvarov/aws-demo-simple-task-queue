@@ -27,9 +27,9 @@ export function listTasks(): Promise<Task[]> {
   return request<Task[]>("/tasks");
 }
 
-export function createTask(seconds: number): Promise<Task> {
+export function createTask(inputSeconds: number): Promise<Task> {
   return request<Task>("/tasks", {
     method: "POST",
-    body: JSON.stringify({ seconds }),
+    body: JSON.stringify({ input_seconds: inputSeconds }),
   });
 }

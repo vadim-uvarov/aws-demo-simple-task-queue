@@ -17,7 +17,7 @@ function TaskRow({ task }: { task: Task }) {
     <li className="task">
       <div className="task-head">
         <StatusBadge status={task.status} />
-        <span className="task-seconds">{task.seconds}s</span>
+        <span className="task-seconds">{task.input_seconds}s</span>
         <span className="task-id" title={task.task_id}>
           {task.task_id.slice(0, 8)}
         </span>
@@ -30,7 +30,7 @@ function TaskRow({ task }: { task: Task }) {
 }
 
 export default function App() {
-  const [seconds, setSeconds] = useState<number>(5);
+  const [inputSeconds, setInputSeconds] = useState<number>(5);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export default function App() {
     setSubmitting(true);
     setError(null);
     try {
-      const created = await createTask(seconds);
+      const created = await createTask(inputSeconds);
       setTasks((prev) => [created, ...prev.filter((t) => t.task_id !== created.task_id)]);
     } catch (err) {
       setError((err as Error).message);
@@ -81,8 +81,8 @@ export default function App() {
             type="number"
             min={0}
             max={30}
-            value={seconds}
-            onChange={(e) => setSeconds(Number(e.target.value))}
+            value={inputSeconds}
+            onChange={(e) => setInputSeconds(Number(e.target.value))}
             disabled={submitting}
           />
         </label>
