@@ -57,7 +57,7 @@ def _create_task(event: APIGatewayProxyEventV2) -> APIGatewayProxyResponseV2:
 
     task_id = str(uuid.uuid4())
     created_at = _now_iso()
-    item = {
+    item: dict[str, str | int] = {
         "task_id": task_id,
         "seconds": seconds,
         "status": "pending",
