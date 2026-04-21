@@ -43,7 +43,7 @@ curl "$API_URL/tasks"
 ## Conventions
 
 - All AWS resources are named `${var.project}_...`.
-- Timestamps are ISO-8601 UTC with milliseconds and a trailing `Z`, produced by `_now_iso()` in both handlers.
+- Timestamps are ISO-8601 UTC with milliseconds and a trailing `Z`, produced by `_get_now_iso()` in both handlers.
 - Task ids are UUIDv4 strings.
 - Status values are exactly `pending` | `in_progress` | `completed` — the frontend's CSS badge classes (`badge-pending`, `badge-in_progress`, `badge-completed`) match these literally.
 
