@@ -50,7 +50,7 @@ VITE_API_URL="$(terraform -chdir=../terraform output -raw api_url)" npm run dev
 - `POST /tasks` — body `{"seconds": 5}`. Returns the created task.
 - `GET /tasks` — list all tasks, newest first.
 
-Validation: `seconds` is an integer, `0 ≤ seconds ≤ 30` (configurable via `max_seconds` in Terraform).
+Validation: `seconds` is an integer, `0 ≤ seconds` (configurable via `max_seconds` in Terraform).
 
 ## Tear down
 
