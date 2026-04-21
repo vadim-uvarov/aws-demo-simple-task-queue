@@ -11,30 +11,30 @@ from aws_lambda_typing.events import SQSEvent
 
 TABLE_NAME = os.environ["TABLE_NAME"]
 
-_table = boto3.resource("dynamodb").Table(TABLE_NAME)
+_db_table = boto3.resource("dynamodb").Table(TABLE_NAME)
 
 
-def _now_iso() -> str:
+def _get_now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
 def _mark_in_progress(task_id: str) -> None:
-    _table.update_item(
+    _db_table.update_item(
         Key={"task_id": task_id},
         UpdateExpression="SET #s = :s, started_at = :t",
         ExpressionAttributeNames={"#s": "status"},
-        ExpressionAttributeValues={":s": "in_progress", ":t": _now_iso()},
+        ExpressionAttributeValues={":s": "in_progress", ":t": _get_now_iso()},
     )
 
 
 def _mark_completed(task_id: str, elapsed: float) -> None:
-    _table.update_item(
+    _db_table.update_item(
         Key={"task_id": task_id},
         UpdateExpression=("SET #s = :s, completed_at = :c, duration_seconds = :d, #r = :r"),
         ExpressionAttributeNames={"#s": "status", "#r": "result"},
         ExpressionAttributeValues={
             ":s": "completed",
-            ":c": _now_iso(),
+            ":c": _get_now_iso(),
             ":d": Decimal(f"{elapsed:.3f}"),
             ":r": f"slept for {elapsed:.3f}s",
         },

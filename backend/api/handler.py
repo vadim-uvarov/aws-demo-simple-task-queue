@@ -18,15 +18,15 @@ QUEUE_URL = os.environ["QUEUE_URL"]
 MAX_SECONDS = int(os.environ.get("MAX_SECONDS", "30"))
 
 _dynamodb: DynamoDBServiceResource = boto3.resource("dynamodb")
-_table: Table = _dynamodb.Table(TABLE_NAME)
+_db_table: Table = _dynamodb.Table(TABLE_NAME)
 _sqs: SQSClient = boto3.client("sqs")
 
 
-def _now_iso() -> str:
+def _get_now_iso() -> str:
     return datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
-def _json_default(value: Any) -> int | float:
+def _encode_for_json(value: Any) -> int | float:
     if isinstance(value, Decimal):
         if value % 1 == 0:
             return int(value)
@@ -34,11 +34,11 @@ def _json_default(value: Any) -> int | float:
     raise TypeError(f"Not JSON serializable: {type(value)}")
 
 
-def _response(status: int, body: Any) -> APIGatewayProxyResponseV2:
+def _build_response(status: int, body: Any) -> APIGatewayProxyResponseV2:
     return {
         "statusCode": status,
         "headers": {"content-type": "application/json"},
-        "body": json.dumps(body, default=_json_default),
+        "body": json.dumps(body, default=_encode_for_json),
     }
 
 
@@ -47,42 +47,42 @@ def _create_task(event: APIGatewayProxyEventV2) -> APIGatewayProxyResponseV2:
     try:
         payload = json.loads(raw_body)
     except json.JSONDecodeError:
-        return _response(400, {"error": "body must be JSON"})
+        return _build_response(400, {"error": "body must be JSON"})
 
     seconds = payload.get("seconds")
     if not isinstance(seconds, int) or isinstance(seconds, bool):
-        return _response(400, {"error": "seconds must be an integer"})
+        return _build_response(400, {"error": "seconds must be an integer"})
     if seconds < 0 or seconds > MAX_SECONDS:
-        return _response(400, {"error": f"seconds must be between 0 and {MAX_SECONDS}"})
+        return _build_response(400, {"error": f"seconds must be between 0 and {MAX_SECONDS}"})
 
     task_id = str(uuid.uuid4())
-    created_at = _now_iso()
+    created_at = _get_now_iso()
     item: dict[str, str | int] = {
         "task_id": task_id,
         "seconds": seconds,
         "status": "pending",
         "created_at": created_at,
     }
-    _table.put_item(Item=item)
+    _db_table.put_item(Item=item)
     _sqs.send_message(
         QueueUrl=QUEUE_URL,
         MessageBody=json.dumps({"task_id": task_id, "seconds": seconds}),
     )
-    return _response(201, item)
+    return _build_response(201, item)
 
 
 def _list_tasks() -> APIGatewayProxyResponseV2:
     items: list[dict[str, Any]] = []
     scan_kwargs: dict[str, Any] = {}
     while True:
-        resp = _table.scan(**scan_kwargs)
-        items.extend(resp.get("Items", []))
-        if "LastEvaluatedKey" not in resp:
+        response = _db_table.scan(**scan_kwargs)
+        items.extend(response.get("Items", []))
+        if "LastEvaluatedKey" not in response:
             break
-        scan_kwargs["ExclusiveStartKey"] = resp["LastEvaluatedKey"]
+        scan_kwargs["ExclusiveStartKey"] = response["LastEvaluatedKey"]
 
     items.sort(key=lambda item: item.get("created_at", ""), reverse=True)
-    return _response(200, items)
+    return _build_response(200, items)
 
 
 def handler(event: APIGatewayProxyEventV2, _context: Context) -> APIGatewayProxyResponseV2:
@@ -95,4 +95,4 @@ def handler(event: APIGatewayProxyEventV2, _context: Context) -> APIGatewayProxy
         return _create_task(event)
     if route == "GET /tasks":
         return _list_tasks()
-    return _response(404, {"error": "not found", "route": route})
+    return _build_response(404, {"error": "not found", "route": route})
