@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "lambda_trust" {
 # ---------- API Lambda ----------
 
 resource "aws_iam_role" "api" {
-  name               = "${local.name}-api"
+  name               = "${local.name}_api"
   assume_role_policy = data.aws_iam_policy_document.lambda_trust.json
 }
 
@@ -55,12 +55,12 @@ resource "aws_iam_role_policy" "api" {
 }
 
 resource "aws_cloudwatch_log_group" "api" {
-  name              = "/aws/lambda/${local.name}-api"
+  name              = "/aws/lambda/${local.name}_api"
   retention_in_days = 14
 }
 
 resource "aws_lambda_function" "api" {
-  function_name    = "${local.name}-api"
+  function_name    = "${local.name}_api"
   role             = aws_iam_role.api.arn
   runtime          = "python3.12"
   handler          = "handler.handler"
@@ -83,7 +83,7 @@ resource "aws_lambda_function" "api" {
 # ---------- Worker Lambda ----------
 
 resource "aws_iam_role" "worker" {
-  name               = "${local.name}-worker"
+  name               = "${local.name}_worker"
   assume_role_policy = data.aws_iam_policy_document.lambda_trust.json
 }
 
@@ -115,12 +115,12 @@ resource "aws_iam_role_policy" "worker" {
 }
 
 resource "aws_cloudwatch_log_group" "worker" {
-  name              = "/aws/lambda/${local.name}-worker"
+  name              = "/aws/lambda/${local.name}_worker"
   retention_in_days = 14
 }
 
 resource "aws_lambda_function" "worker" {
-  function_name    = "${local.name}-worker"
+  function_name    = "${local.name}_worker"
   role             = aws_iam_role.worker.arn
   runtime          = "python3.12"
   handler          = "handler.handler"

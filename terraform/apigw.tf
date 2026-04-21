@@ -1,5 +1,5 @@
 resource "aws_apigatewayv2_api" "api" {
-  name          = "${local.name}-api"
+  name          = "${local.name}_api"
   protocol_type = "HTTP"
 
   cors_configuration {
