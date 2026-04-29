@@ -1,17 +1,21 @@
+from __future__ import annotations
+
 import json
 import os
 import uuid
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import boto3
-from aws_lambda_typing.context import Context
-from aws_lambda_typing.events import APIGatewayProxyEventV2
-from aws_lambda_typing.responses import APIGatewayProxyResponseV2
-from mypy_boto3_dynamodb import DynamoDBServiceResource
-from mypy_boto3_dynamodb.service_resource import Table
-from mypy_boto3_sqs import SQSClient
+
+if TYPE_CHECKING:
+    from aws_lambda_typing.context import Context
+    from aws_lambda_typing.events import APIGatewayProxyEventV2
+    from aws_lambda_typing.responses import APIGatewayProxyResponseV2
+    from mypy_boto3_dynamodb import DynamoDBServiceResource
+    from mypy_boto3_dynamodb.service_resource import Table
+    from mypy_boto3_sqs import SQSClient
 
 TABLE_NAME = os.environ["TABLE_NAME"]
 QUEUE_URL = os.environ["QUEUE_URL"]

@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 import json
 import os
 import time
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import boto3
-from aws_lambda_typing.context import Context
-from aws_lambda_typing.events import SQSEvent
+
+if TYPE_CHECKING:
+    from aws_lambda_typing.context import Context
+    from aws_lambda_typing.events import SQSEvent
 
 TABLE_NAME = os.environ["TABLE_NAME"]
 
