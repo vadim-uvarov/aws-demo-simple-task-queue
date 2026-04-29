@@ -1,6 +1,14 @@
 terraform {
   required_version = ">= 1.6"
 
+  backend "s3" {
+    bucket         = "aws-demo-simple-task-queue-tfstate-174054318404"
+    key            = "terraform.tfstate"
+    region         = "eu-west-1"
+    dynamodb_table = "aws-demo-simple-task-queue-tfstate-lock"
+    encrypt        = true
+  }
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -13,6 +21,10 @@ terraform {
     random = {
       source  = "hashicorp/random"
       version = "~> 3.6"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
     }
   }
 }
