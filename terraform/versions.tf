@@ -2,11 +2,11 @@ terraform {
   required_version = ">= 1.6"
 
   backend "s3" {
-    bucket         = "aws-demo-simple-task-queue-tfstate-174054318404"
-    key            = "terraform.tfstate"
-    region         = "eu-west-1"
-    dynamodb_table = "aws-demo-simple-task-queue-tfstate-lock"
-    encrypt        = true
+    bucket       = "aws-demo-simple-task-queue-tfstate-174054318404"
+    key          = "terraform.tfstate"
+    region       = "eu-west-1"
+    use_lockfile = true
+    encrypt      = true
   }
 
   required_providers {
