@@ -27,3 +27,8 @@ output "table_name" {
   description = "DynamoDB tasks table name."
   value       = aws_dynamodb_table.tasks.name
 }
+
+output "cicd_role_arn" {
+  description = "ARN of the IAM role assumed by GitHub Actions via OIDC."
+  value       = aws_iam_role.cicd_deploy.arn
+}

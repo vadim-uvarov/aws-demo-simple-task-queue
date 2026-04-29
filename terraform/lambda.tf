@@ -126,7 +126,7 @@ resource "aws_lambda_function" "worker" {
   handler          = "handler.handler"
   filename         = data.archive_file.worker_zip.output_path
   source_code_hash = data.archive_file.worker_zip.output_base64sha256
-  timeout          = 60 * 15  # 15 minutes
+  timeout          = 60 * 15 # 15 minutes
   memory_size      = 128
 
   environment {
