@@ -52,6 +52,8 @@ curl "$API_URL/tasks"
 ### Commits
 - Use commitizen format for commit messages
 - Mention yourself as a co-author
+- Commit along the way after completing each logical unit of work
+- Combine related code changes into a single commit
 
 ### Function Naming
 - Start all function and method names with action verbs.
