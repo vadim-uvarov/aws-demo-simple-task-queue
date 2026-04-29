@@ -20,8 +20,8 @@ resource "aws_sqs_queue" "tasks_dlq" {
 
 resource "aws_sqs_queue" "tasks" {
   name                       = "${local.name}_tasks"
-  visibility_timeout_seconds = aws_lambda_function.worker.timeout * 6  # AWS reccommendation
-  message_retention_seconds  = 345600 # 4 days
+  visibility_timeout_seconds = aws_lambda_function.worker.timeout * 6 # AWS reccommendation
+  message_retention_seconds  = 345600                                 # 4 days
 
   redrive_policy = jsonencode({
     deadLetterTargetArn = aws_sqs_queue.tasks_dlq.arn
