@@ -55,7 +55,7 @@ def _process(body: dict[str, Any]) -> None:
     _mark_completed(task_id, elapsed)
 
 
-def handler(event: SQSEvent, _context: Context) -> dict[str, bool]:
+def handler(event: SQSEvent, _context: Context):
     for record in event.get("Records", []):
         raw_body = record.get("body")
         if raw_body is None:
