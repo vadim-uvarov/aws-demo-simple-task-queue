@@ -70,8 +70,16 @@ export default function App() {
   return (
     <main className="app">
       <h1>Task Queue Demo</h1>
+
       <p className="subtitle">
         Submit an integer. A Lambda worker sleeps that many seconds, then reports back.
+      </p>
+
+      <p>
+        Link to a repo:{" "}
+        <a href="https://github.com/vadim-uvarov/aws-demo-simple-task-queue">
+          https://github.com/vadim-uvarov/aws-demo-simple-task-queue
+        </a>
       </p>
 
       <form className="form" onSubmit={onSubmit}>
