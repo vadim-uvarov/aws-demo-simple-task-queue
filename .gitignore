@@ -4,3 +4,4 @@ dist/
 .env.local
 .envrc
 *.tsbuildinfo
+.DS_Store
