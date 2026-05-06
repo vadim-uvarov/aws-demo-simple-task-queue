@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 480" preserveAspectRatio="xMidYMid meet" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-labelledby="arch-title arch-desc">
+  <title id="arch-title">Architecture diagram</title>
+  <desc id="arch-desc">The browser loads the SPA from CloudFront, which serves the static bundle from a private S3 bucket. The browser calls the HTTP API Gateway, which routes to the API Lambda. The API Lambda writes tasks to DynamoDB and enqueues a message on SQS. SQS triggers the Worker Lambda, which sleeps for the requested number of seconds and updates the task status in DynamoDB.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7280" />
+    </marker>
+  </defs>
+
+  <g transform="translate(40,200)">
+    <rect width="120" height="64" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5" />
+    <text x="60" y="38" text-anchor="middle" font-size="14" fill="#1a1a1a" font-weight="600">Browser</text>
+  </g>
+
+  <g transform="translate(230,40)">
+    <rect width="140" height="64" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5" />
+    <text x="70" y="32" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">CloudFront</text>
+    <text x="70" y="50" text-anchor="middle" font-size="11" fill="#555">CDN + HTTPS</text>
+  </g>
+
+  <g transform="translate(560,40)">
+    <rect width="180" height="64" rx="8" fill="#ffffff" stroke="#0ea5e9" stroke-width="1.5" />
+    <text x="90" y="32" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">S3 (private)</text>
+    <text x="90" y="50" text-anchor="middle" font-size="11" fill="#555">Static SPA bundle</text>
+  </g>
+
+  <g transform="translate(230,200)">
+    <rect width="140" height="64" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5" />
+    <text x="70" y="32" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">API Gateway</text>
+    <text x="70" y="50" text-anchor="middle" font-size="11" fill="#555">HTTP API</text>
+  </g>
+
+  <g transform="translate(420,200)">
+    <rect width="160" height="64" rx="8" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5" />
+    <text x="80" y="32" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">API Lambda</text>
+    <text x="80" y="50" text-anchor="middle" font-size="11" fill="#555">Python 3.12</text>
+  </g>
+
+  <g transform="translate(420,360)">
+    <rect width="160" height="64" rx="8" fill="#ffffff" stroke="#0ea5e9" stroke-width="1.5" />
+    <text x="80" y="32" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">SQS Queue</text>
+    <text x="80" y="50" text-anchor="middle" font-size="11" fill="#555">+ Dead-Letter Queue</text>
+  </g>
+
+  <g transform="translate(190,360)">
+    <rect width="180" height="64" rx="8" fill="#ffffff" stroke="#f59e0b" stroke-width="1.5" />
+    <text x="90" y="32" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">Worker Lambda</text>
+    <text x="90" y="50" text-anchor="middle" font-size="11" fill="#555">Python 3.12 — sleeps N s</text>
+  </g>
+
+  <g transform="translate(620,200)">
+    <rect width="140" height="64" rx="8" fill="#ffffff" stroke="#0ea5e9" stroke-width="1.5" />
+    <text x="70" y="32" text-anchor="middle" font-size="13" fill="#1a1a1a" font-weight="600">DynamoDB</text>
+    <text x="70" y="50" text-anchor="middle" font-size="11" fill="#555">tasks</text>
+  </g>
+
+  <line x1="160" y1="220" x2="226" y2="80" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+  <rect x="172" y="138" width="48" height="16" fill="#ffffff" />
+  <text x="196" y="150" text-anchor="middle" font-size="11" fill="#555">load SPA</text>
+
+  <line x1="370" y1="72" x2="556" y2="72" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+  <rect x="438" y="60" width="50" height="16" fill="#ffffff" />
+  <text x="463" y="72" text-anchor="middle" font-size="11" fill="#555">OAC</text>
+
+  <line x1="160" y1="232" x2="226" y2="232" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+  <rect x="170" y="218" width="50" height="16" fill="#ffffff" />
+  <text x="195" y="230" text-anchor="middle" font-size="11" fill="#555">HTTPS</text>
+
+  <line x1="370" y1="232" x2="416" y2="232" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+
+  <line x1="580" y1="232" x2="616" y2="232" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+  <rect x="568" y="218" width="60" height="16" fill="#ffffff" />
+  <text x="598" y="230" text-anchor="middle" font-size="11" fill="#555">write/read</text>
+
+  <line x1="500" y1="264" x2="500" y2="356" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+  <rect x="476" y="302" width="48" height="16" fill="#ffffff" />
+  <text x="500" y="314" text-anchor="middle" font-size="11" fill="#555">send</text>
+
+  <line x1="420" y1="392" x2="372" y2="392" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+  <rect x="376" y="378" width="56" height="16" fill="#ffffff" />
+  <text x="404" y="390" text-anchor="middle" font-size="11" fill="#555">trigger</text>
+
+  <path d="M 370 376 Q 560 360 660 264" fill="none" stroke="#6b7280" stroke-width="1.4" marker-end="url(#arrow)" />
+  <rect x="540" y="332" width="56" height="16" fill="#ffffff" />
+  <text x="568" y="344" text-anchor="middle" font-size="11" fill="#555">update</text>
+</svg>
