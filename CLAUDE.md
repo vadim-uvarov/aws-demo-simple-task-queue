@@ -88,4 +88,4 @@ curl "$API_URL/tasks"
 
 ## Project Documentation
 - High-level project documentation is stored in readme.md
-- Keep readme.md up-to-date with the code
+- Keep readme.md and frontend/DocsPage.tsx up-to-date with the code

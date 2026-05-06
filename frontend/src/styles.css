@@ -167,3 +167,155 @@ h1 {
   background: #dcfce7;
   color: #166534;
 }
+
+.shell {
+  max-width: 100%;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0 1.25rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.tab {
+  background: none;
+  border: 0;
+  padding: 0.85rem 1rem;
+  font-size: 0.95rem;
+  color: #555;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  font-family: inherit;
+}
+
+.tab[aria-selected="true"] {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+  font-weight: 600;
+}
+
+.tab:hover {
+  color: #1a1a1a;
+}
+
+.tab:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.docs {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+.docs h1 {
+  margin-bottom: 0.25rem;
+}
+
+.docs h2 {
+  margin-top: 2.25rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.docs h3 {
+  margin-top: 1.4rem;
+  margin-bottom: 0.4rem;
+  color: #1a1a1a;
+  font-size: 1.05rem;
+}
+
+.docs p,
+.docs li {
+  line-height: 1.6;
+  color: #2a2f36;
+}
+
+.docs ul,
+.docs ol {
+  padding-left: 1.25rem;
+}
+
+.docs code {
+  background: #eef2ff;
+  color: #1d4ed8;
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85em;
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.25rem;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.docs-table th,
+.docs-table td {
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+  border-bottom: 1px solid #eef0f3;
+  font-size: 0.9rem;
+  vertical-align: top;
+}
+
+.docs-table th {
+  background: #fafbfc;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.docs-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.diagram {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0 0.5rem;
+  box-sizing: border-box;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+}
+
+.pill {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #1d4ed8;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.callout {
+  background: #eff6ff;
+  border-left: 3px solid #2563eb;
+  padding: 0.7rem 0.9rem;
+  border-radius: 4px;
+  margin: 1rem 0;
+  font-size: 0.92rem;
+  color: #1f2937;
+}

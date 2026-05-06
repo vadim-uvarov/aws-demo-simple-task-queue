@@ -1,6 +1,14 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type KeyboardEvent } from "react";
 import { createTask, listTasks } from "./api";
 import type { Task, TaskStatus } from "./types";
+import DocsPage from "./DocsPage";
+
+type TabId = "app" | "docs";
+
+const TABS: { id: TabId; label: string }[] = [
+  { id: "app", label: "App" },
+  { id: "docs", label: "Documentation" },
+];
 
 const STATUS_LABEL: Record<TaskStatus, string> = {
   pending: "pending",
@@ -29,7 +37,7 @@ function TaskRow({ task }: { task: Task }) {
   );
 }
 
-export default function App() {
+function MainPage() {
   const [inputSeconds, setInputSeconds] = useState<number>(5);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -129,5 +137,57 @@ export default function App() {
         </ul>
       )}
     </main>
+  );
+}
+
+function TabBar({ active, onSelect }: { active: TabId; onSelect: (id: TabId) => void }) {
+  const handleTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const currentIndex = TABS.findIndex((tab) => tab.id === active);
+    const offset = event.key === "ArrowRight" ? 1 : -1;
+    const nextIndex = (currentIndex + offset + TABS.length) % TABS.length;
+    onSelect(TABS[nextIndex].id);
+  };
+
+  return (
+    <div className="tabs" role="tablist" aria-label="Site sections">
+      {TABS.map((tab) => {
+        const isActive = tab.id === active;
+        return (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            id={`tab-${tab.id}`}
+            className="tab"
+            aria-selected={isActive}
+            aria-controls={`panel-${tab.id}`}
+            tabIndex={isActive ? 0 : -1}
+            onClick={() => onSelect(tab.id)}
+            onKeyDown={handleTabKeyDown}
+          >
+            {tab.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState<TabId>("app");
+
+  return (
+    <div className="shell">
+      <TabBar active={activeTab} onSelect={setActiveTab} />
+      <div
+        role="tabpanel"
+        id={`panel-${activeTab}`}
+        aria-labelledby={`tab-${activeTab}`}
+      >
+        {activeTab === "app" ? <MainPage /> : <DocsPage />}
+      </div>
+    </div>
   );
 }
