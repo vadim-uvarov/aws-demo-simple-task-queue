@@ -44,7 +44,7 @@ The app (frontend and backend) is deployed automatically via **GitHub Actions** 
 
 The backend is deployed via **terraform** and frontend via **npm**-based shell script.
 
-PR is automatically checked for code standads using **GitHub actions** (**ruff** and **mypy**) while merging to master is forbidden if the CI pipeline fails.
+PR is automatically checked for code standards using **GitHub actions** (**ruff** and **mypy**, **terraform fmt**) and the **backend/frontend build** is tested (without deployment). Merging to master is forbidden if until CI pipeline succeeds.
 
 ### Local deploy of the frontend
 Run `./scripts/deploy-frontend-local.sh`
