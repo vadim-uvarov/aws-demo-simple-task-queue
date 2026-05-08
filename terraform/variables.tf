@@ -13,5 +13,11 @@ variable "project" {
 variable "max_seconds" {
   description = "Upper bound on the user-submitted sleep duration."
   type        = number
-  default     = 5 * 60 # 5 minutes
+  default     = 30
+}
+
+variable "max_queue_size" {
+  description = "Maximum number of pending tasks allowed in the SQS queue before new submissions are rejected."
+  type        = number
+  default     = 5
 }
