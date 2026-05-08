@@ -18,7 +18,14 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(`${res.status} ${res.statusText}: ${text}`);
+    let message = text || `${res.status} ${res.statusText}`;
+    try {
+      const parsed = JSON.parse(text);
+      if (parsed && typeof parsed.error === "string") message = parsed.error;
+    } catch {
+      // Body wasn't JSON — fall through with the raw text.
+    }
+    throw new Error(message);
   }
   return res.json() as Promise<T>;
 }

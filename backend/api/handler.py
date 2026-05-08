@@ -20,6 +20,7 @@ if TYPE_CHECKING:
 TABLE_NAME = os.environ["TABLE_NAME"]
 QUEUE_URL = os.environ["QUEUE_URL"]
 MAX_SECONDS = int(os.environ.get("MAX_SECONDS", "30"))
+MAX_QUEUE_SIZE = int(os.environ["MAX_QUEUE_SIZE"])
 
 _dynamodb: DynamoDBServiceResource = boto3.resource("dynamodb")
 _db_table: Table = _dynamodb.Table(TABLE_NAME)
@@ -60,6 +61,20 @@ def _create_task(event: APIGatewayProxyEventV2) -> APIGatewayProxyResponseV2:
         return _build_response(
             400,
             {"error": f"input_seconds must be between 0 and {MAX_SECONDS}"},
+        )
+
+    # ApproximateNumberOfMessages counts only visible (pending) messages, not in-flight ones being
+    # processed by a worker — matches the "queue depth" cap the user wants. The value is eventually
+    # consistent (~1 min lag) so brief over-submission is possible; acceptable for this demo.
+    queue_attributes = _sqs.get_queue_attributes(
+        QueueUrl=QUEUE_URL,
+        AttributeNames=["ApproximateNumberOfMessages"],
+    )
+    pending_count = int(queue_attributes["Attributes"]["ApproximateNumberOfMessages"])
+    if pending_count >= MAX_QUEUE_SIZE:
+        return _build_response(
+            429,
+            {"error": f"queue is full (max {MAX_QUEUE_SIZE} pending tasks); try again shortly"},
         )
 
     task_id = str(uuid.uuid4())

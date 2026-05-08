@@ -15,3 +15,9 @@ variable "max_seconds" {
   type        = number
   default     = 5 * 60 # 5 minutes
 }
+
+variable "max_queue_size" {
+  description = "Maximum number of pending tasks allowed in the SQS queue before new submissions are rejected."
+  type        = number
+  default     = 5
+}

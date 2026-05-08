@@ -37,7 +37,10 @@ data "aws_iam_policy_document" "api" {
     resources = [aws_dynamodb_table.tasks.arn]
   }
   statement {
-    actions   = ["sqs:SendMessage"]
+    actions = [
+      "sqs:SendMessage",
+      "sqs:GetQueueAttributes",
+    ]
     resources = [aws_sqs_queue.tasks.arn]
   }
   statement {
@@ -71,9 +74,10 @@ resource "aws_lambda_function" "api" {
 
   environment {
     variables = {
-      TABLE_NAME  = aws_dynamodb_table.tasks.name
-      QUEUE_URL   = aws_sqs_queue.tasks.url
-      MAX_SECONDS = tostring(var.max_seconds)
+      TABLE_NAME     = aws_dynamodb_table.tasks.name
+      QUEUE_URL      = aws_sqs_queue.tasks.url
+      MAX_SECONDS    = tostring(var.max_seconds)
+      MAX_QUEUE_SIZE = tostring(var.max_queue_size)
     }
   }
 
